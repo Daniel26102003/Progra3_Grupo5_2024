@@ -35,5 +35,9 @@ public class Pilas {
     public void Mostrar_pila(){
     System.out.println(pila);
     }
+    
+     public void Mostrar_pila2(){
+    System.out.println(pila);
+    }
    
 }
