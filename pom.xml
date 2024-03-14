@@ -49,5 +49,11 @@
             <version>1.0</version>
             <type>jar</type>
         </dependency>
+        <dependency>
+            <groupId>jar</groupId>
+            <artifactId>conector-j</artifactId>
+            <version>8.2.0</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
 </project>
