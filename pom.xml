@@ -12,4 +12,42 @@
         <exec.mainClass>Clases.ProyectoGrupo3</exec.mainClass>
     </properties>
     <name>ProyectoGrupo5</name>
+    <dependencies>
+        <dependency>
+            <groupId>JWC</groupId>
+            <artifactId>grafico_barrav</artifactId>
+            <version>1.0</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>JWC</groupId>
+            <artifactId>btn_efecto01_</artifactId>
+            <version>1.0</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>JWC</groupId>
+            <artifactId>grafico_circular</artifactId>
+            <version>1.0</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>JWC</groupId>
+            <artifactId>img_redondo_degradado</artifactId>
+            <version>1.0</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>JWC</groupId>
+            <artifactId>liberia</artifactId>
+            <version>02</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>JWC</groupId>
+            <artifactId>panel_degradado</artifactId>
+            <version>1.0</version>
+            <type>jar</type>
+        </dependency>
+    </dependencies>
 </project>
