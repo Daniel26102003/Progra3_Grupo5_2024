@@ -16,7 +16,7 @@ import java.sql.SQLException;
 public class ConexionBD {
     Connection conn;
     private String host = "localhost";
-    private String port = "3306";
+    private String port = "3308";
     private String dbName = "proyectoGrupo5";
     private String userName = "root";
     private String password = "Grupo5";
