@@ -21,42 +21,6 @@
     </repositories>
     <dependencies>
         <dependency>
-            <groupId>JWC</groupId>
-            <artifactId>Grafico_circular</artifactId>
-            <version>1</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>JWC</groupId>
-            <artifactId>Panel_degradado</artifactId>
-            <version>1.0</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>JWC</groupId>
-            <artifactId>btn_efecto</artifactId>
-            <version>01</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>JWC</groupId>
-            <artifactId>grafico_barrav</artifactId>
-            <version>01</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>JWC</groupId>
-            <artifactId>img_redondo_degradado</artifactId>
-            <version>01</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>JWC</groupId>
-            <artifactId>liberia</artifactId>
-            <version>02</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
             <groupId>conec</groupId>
             <artifactId>conector</artifactId>
             <version>8.0.33</version>
