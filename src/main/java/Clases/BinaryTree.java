@@ -12,13 +12,14 @@ public class BinaryTree {
     static class Node {
         int value;
         Node left, right;
+        private String data;
 
         Node(int value) {
             this.value = value;
             left = right = null;
         }
     }
-
+    
     private Node root;
 
     public BinaryTree() {
@@ -44,6 +45,49 @@ public class BinaryTree {
             root.right = insertRec(root.right, value);
         return root;
     }
+    
+    public String Postorden() {
+        return Postorden(root);
+    }
+
+    private String Postorden(Node node) {
+        StringBuilder result = new StringBuilder();
+        if (node != null) {
+            result.append(Postorden(node.left));
+            result.append(Postorden(node.right));
+            result.append(node.value).append(" ");
+        }
+        return result.toString();
+    }
+
+    public String Inorden() {
+        return Inorden(root);
+    }
+
+    private String Inorden(Node node) {
+        StringBuilder result = new StringBuilder();
+        if (node != null) {
+            result.append(Inorden(node.left));
+            result.append(node.value).append(" ");
+            result.append(Inorden(node.right));
+        }
+        return result.toString();
+    }
+
+    public String Preorden() {
+        return Preorden(root);
+    }
+
+    private String Preorden(Node node) {
+        StringBuilder result = new StringBuilder();
+        if (node != null) {
+            result.append(node.value).append(" ");
+            result.append(Preorden(node.left));
+            result.append(Preorden(node.right));
+        }
+        return result.toString();
+    }
+    
     public int getWidth() {
         return getWidth(root);
     }
@@ -68,5 +112,4 @@ public class BinaryTree {
         return Math.max(1, Math.max(leftHeight, rightHeight) + 1);
     }
 }
-
 

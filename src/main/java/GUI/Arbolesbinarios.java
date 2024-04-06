@@ -133,6 +133,7 @@ private BinaryTree tree;
         btnImprimirArbol = new javax.swing.JButton();
         btnLimpiarBD = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
         jScrollPane3 = new javax.swing.JScrollPane();
         jDesktopPane1 = new javax.swing.JDesktopPane();
         jInternalFrame1 = new javax.swing.JInternalFrame();
@@ -158,14 +159,27 @@ private BinaryTree tree;
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tblBDMouseClicked(evt);
             }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                tblBDMouseEntered(evt);
+            }
         });
         jScrollPane1.setViewportView(tblBD);
 
         btnCargaArchivoBD.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/cargar.png"))); // NOI18N
         btnCargaArchivoBD.setText("Cargar archivo a BD");
+        btnCargaArchivoBD.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCargaArchivoBDActionPerformed(evt);
+            }
+        });
 
         btnGenerarArbol.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/generar.png"))); // NOI18N
         btnGenerarArbol.setText("Generar Árbol");
+        btnGenerarArbol.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGenerarArbolActionPerformed(evt);
+            }
+        });
 
         btnImprimirArbol.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Imprimir.png"))); // NOI18N
         btnImprimirArbol.setText("Imprimir Árbol");
@@ -182,6 +196,10 @@ private BinaryTree tree;
                 btnLimpiarBDActionPerformed(evt);
             }
         });
+
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jScrollPane2.setViewportView(jTextArea1);
 
         jInternalFrame1.setVisible(true);
 
@@ -273,8 +291,8 @@ private BinaryTree tree;
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
                         .addComponent(txDato, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(35, 35, 35))
                     .addGroup(layout.createSequentialGroup()
@@ -303,6 +321,18 @@ private BinaryTree tree;
         this.txDato.setText(this.tblBD.getValueAt(fila, 1).toString());
         this.txID.setText(this.tblBD.getValueAt(fila, 0).toString());
         this.txEstado.setText(this.tblBD.getValueAt(fila, 2).toString());
+        tree = new BinaryTree();
+
+    String input = txDato.getText();
+    String[] values = input.split(",");
+    for (String value : values) {
+        try {
+            int num = Integer.parseInt(value.trim());
+            tree.insert(num);
+        } catch (NumberFormatException ex) {
+            ex.printStackTrace();
+        }
+    }
     }//GEN-LAST:event_tblBDMouseClicked
 
     private void btnImprimirArbolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImprimirArbolActionPerformed
@@ -329,6 +359,31 @@ private BinaryTree tree;
     }
     }//GEN-LAST:event_btnLimpiarBDActionPerformed
 
+    private void btnGenerarArbolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarArbolActionPerformed
+
+    String postorden = "Recorrido Postorden: " + tree.Postorden();
+    String inorden = "\nRecorrido Inorden: " + tree.Inorden();
+    String preorden = "\nRecorrido Preorden: " + tree.Preorden();
+    
+    String newText = postorden + "\n" + inorden + "\n" + preorden;
+    
+    if (jTextArea1 == null) {
+        jTextArea1 = new JTextArea();
+        jTextArea1.setEditable(false);
+    }
+    
+    jTextArea1.setText(newText);
+
+    }//GEN-LAST:event_btnGenerarArbolActionPerformed
+
+    private void tblBDMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblBDMouseEntered
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tblBDMouseEntered
+
+    private void btnCargaArchivoBDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCargaArchivoBDActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnCargaArchivoBDActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -345,6 +400,7 @@ private BinaryTree tree;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTable tblBD;
     private javax.swing.JTextField txDato;
     private javax.swing.JTextField txEstado;
