@@ -381,7 +381,8 @@ private BinaryTree tree;
     }//GEN-LAST:event_tblBDMouseEntered
 
     private void btnCargaArchivoBDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCargaArchivoBDActionPerformed
-        // TODO add your handling code here:
+        Carga vCarga =new Carga();
+        dispose();
     }//GEN-LAST:event_btnCargaArchivoBDActionPerformed
 
     /**
