@@ -33,6 +33,8 @@ private BinaryTree tree;
         mostrarDatosEnTabla();
         tree = new BinaryTree();
         txDato.setVisible(false);
+        txID.setVisible(false);
+        txEstado.setVisible(false);
         
     }
     public void cerrar(){
@@ -111,6 +113,8 @@ private BinaryTree tree;
     jInternalFrame1.pack();
     jInternalFrame1.setVisible(true);
 }
+    
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -134,6 +138,8 @@ private BinaryTree tree;
         jInternalFrame1 = new javax.swing.JInternalFrame();
         txDato = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
+        txID = new javax.swing.JTextField();
+        txEstado = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -171,6 +177,11 @@ private BinaryTree tree;
 
         btnLimpiarBD.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/limpiar.png"))); // NOI18N
         btnLimpiarBD.setText("Limpiar Base de Datos");
+        btnLimpiarBD.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLimpiarBDActionPerformed(evt);
+            }
+        });
 
         jInternalFrame1.setVisible(true);
 
@@ -214,18 +225,24 @@ private BinaryTree tree;
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(185, 185, 185)
-                        .addComponent(btnCargaArchivoBD))
-                    .addGroup(layout.createSequentialGroup()
                         .addGap(200, 200, 200)
-                        .addComponent(btnGenerarArbol))
+                        .addComponent(btnGenerarArbol)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(txID, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(195, 195, 195)
-                        .addComponent(btnImprimirArbol, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(173, 173, 173)
-                        .addComponent(btnLimpiarBD, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(195, 195, 195)
+                                .addComponent(btnImprimirArbol, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(173, 173, 173)
+                                .addComponent(btnLimpiarBD, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(185, 185, 185)
+                                .addComponent(btnCargaArchivoBD)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(txEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(12, 12, 12)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 492, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -261,13 +278,19 @@ private BinaryTree tree;
                         .addComponent(txDato, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(35, 35, 35))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnCargaArchivoBD)
-                        .addGap(16, 16, 16)
-                        .addComponent(btnGenerarArbol)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnImprimirArbol)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnLimpiarBD)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnCargaArchivoBD)
+                                .addGap(16, 16, 16)
+                                .addComponent(btnGenerarArbol)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(btnImprimirArbol)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(btnLimpiarBD))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(txID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(txEstado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addContainerGap())))
         );
 
@@ -278,6 +301,8 @@ private BinaryTree tree;
         txDato.setEditable(false);
         int fila=this.tblBD.getSelectedRow();
         this.txDato.setText(this.tblBD.getValueAt(fila, 1).toString());
+        this.txID.setText(this.tblBD.getValueAt(fila, 0).toString());
+        this.txEstado.setText(this.tblBD.getValueAt(fila, 2).toString());
     }//GEN-LAST:event_tblBDMouseClicked
 
     private void btnImprimirArbolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImprimirArbolActionPerformed
@@ -287,6 +312,22 @@ private BinaryTree tree;
         JOptionPane.showMessageDialog(this, "Seleccione al menos un valor para imprimir el árbol", "Advertencia", JOptionPane.WARNING_MESSAGE);
     }
     }//GEN-LAST:event_btnImprimirArbolActionPerformed
+
+    private void btnLimpiarBDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarBDActionPerformed
+    String texto1 = txDato.getText();
+    String texto2 = txID.getText();
+    String texto3= txEstado.getText();
+    
+    if (!texto1.isEmpty() && !texto2.isEmpty() && !texto3.isEmpty()) {
+        Eliminacion vEliminacion= new Eliminacion();
+        vEliminacion.txID.setText(texto2);
+        vEliminacion.txDATO.setText(texto1);
+        vEliminacion.txESTADO.setText(texto3);
+        dispose();
+    } else {
+        JOptionPane.showMessageDialog(this, "Por favor, complete todos los campos antes de continuar.", "Campos vacíos", JOptionPane.ERROR_MESSAGE);
+    }
+    }//GEN-LAST:event_btnLimpiarBDActionPerformed
 
     /**
      * @param args the command line arguments
@@ -306,6 +347,8 @@ private BinaryTree tree;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTable tblBD;
     private javax.swing.JTextField txDato;
+    private javax.swing.JTextField txEstado;
+    private javax.swing.JTextField txID;
     // End of variables declaration//GEN-END:variables
 ConexionBD cn = new ConexionBD();
 Connection con = cn.conexion();
