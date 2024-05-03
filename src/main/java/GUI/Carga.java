@@ -13,6 +13,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
@@ -31,9 +34,13 @@ public class Carga extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
     }
     private boolean validarFormato(String linea) {
-    return linea.matches("^\\d+(,\\d+)*$");
-    }   
-
+    if (linea.matches("^\\d+(,\\d+)*$")) {
+        String[] numeros = linea.split(",");
+        Set<String> set = new HashSet<>(Arrays.asList(numeros));
+        return set.size() == numeros.length;
+    }
+    return false;
+}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -126,7 +133,7 @@ public class Carga extends javax.swing.JFrame {
             String linea;
             while ((linea = br.readLine()) != null) {
                 if (!validarFormato(linea)) {
-                    JOptionPane.showMessageDialog(null, "El formato del archivo no es válido. Debe contener solo números separados por comas.");
+                    JOptionPane.showMessageDialog(null, "El formato del archivo no es válido.");
                     return;
                 }
                 statementSelect.setString(1, linea);
