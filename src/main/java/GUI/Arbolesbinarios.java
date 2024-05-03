@@ -89,33 +89,63 @@ private BinaryTree tree;
             System.err.println("Error al obtener los datos: " + e.getMessage());
         }
     }
-                                                     
+    
     private void imprimirArbol() {
-    tree = new BinaryTree();
-
-    String input = txDato.getText();
-    String[] values = input.split(",");
-    for (String value : values) {
-        try {
-            int num = Integer.parseInt(value.trim());
-            tree.insert(num);
-        } catch (NumberFormatException ex) {
-            ex.printStackTrace();
+        boolean imprimirArbol = obtenerEstadoDesdeBD();
+        if (!imprimirArbol) {
+            JOptionPane.showMessageDialog(null, "No se puede graficar el árbol porque el estado es 0.", "Mensaje de Alerta", JOptionPane.WARNING_MESSAGE);
+            return; 
         }
+        tree = new BinaryTree();
+        String input = txDato.getText();
+        String[] values = input.split(",");
+        for (String value : values) {
+            try {
+                int num = Integer.parseInt(value.trim());
+                tree.insert(num);
+            } catch (NumberFormatException ex) {
+                ex.printStackTrace();
+            }
+        }
+        int internalFrameWidth = jInternalFrame1.getWidth();
+        int internalFrameHeight = jInternalFrame1.getHeight();
+        BinaryTreePanel panel = new BinaryTreePanel(tree);
+        panel.setPreferredSize(new Dimension(internalFrameWidth, internalFrameHeight));
+        jInternalFrame1.setContentPane(panel);
+        jInternalFrame1.pack();
+        jInternalFrame1.setVisible(true);
     }
 
-    int internalFrameWidth = jInternalFrame1.getWidth();
-    int internalFrameHeight = jInternalFrame1.getHeight();
+    private boolean obtenerEstadoDesdeBD() {
+        boolean imprimirArbol = false;
+        String idStr = txID.getText();
+        if (!idStr.isEmpty()) {
+            try {
+                int id = Integer.parseInt(idStr);
 
-    BinaryTreePanel panel = new BinaryTreePanel(tree);
-    panel.setPreferredSize(new Dimension(internalFrameWidth, internalFrameHeight));
-    jInternalFrame1.setContentPane(panel);
-    jInternalFrame1.pack();
-    jInternalFrame1.setVisible(true);
-}
-    
+                ConexionBD cn = new ConexionBD(); 
+                Connection con = cn.conexion(); 
 
+                String sql = "SELECT ESTADO FROM arbolesbin WHERE ID = ?";
+                PreparedStatement pstmt = con.prepareStatement(sql);
+                pstmt.setInt(1, id);
 
+                ResultSet rs = pstmt.executeQuery();
+
+                if (rs.next()) {
+                    int estado = rs.getInt("ESTADO");
+                    imprimirArbol = (estado != 0);
+                }
+
+                rs.close();
+                pstmt.close();
+                con.close();
+            } catch (NumberFormatException | SQLException e) {
+                System.err.println("Error al obtener el estado: " + e.getMessage());
+            }
+        }
+        return imprimirArbol;
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -250,37 +280,13 @@ private BinaryTree tree;
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(200, 200, 200)
-                        .addComponent(btnGenerarArbol)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(txID, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(195, 195, 195)
-                                .addComponent(btnImprimirArbol, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(173, 173, 173)
-                                .addComponent(btnLimpiarBD, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(185, 185, 185)
-                                .addComponent(btnCargaArchivoBD)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txEstado, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(btnMenu)
-                                .addGap(34, 34, 34)))))
+                .addGap(200, 200, 200)
+                .addComponent(btnGenerarArbol)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(txID, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(12, 12, 12)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 492, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(119, 119, 119))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(txDato, javax.swing.GroupLayout.PREFERRED_SIZE, 308, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(223, 223, 223))))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 492, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(119, 119, 119))
             .addGroup(layout.createSequentialGroup()
                 .addGap(536, 536, 536)
                 .addComponent(jLabel1)
@@ -291,6 +297,28 @@ private BinaryTree tree;
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 624, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(195, 195, 195)
+                        .addComponent(btnImprimirArbol, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(173, 173, 173)
+                        .addComponent(btnLimpiarBD, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(185, 185, 185)
+                        .addComponent(btnCargaArchivoBD)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txEstado, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(btnMenu)
+                        .addGap(34, 34, 34)))
+                .addGap(623, 623, 623))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(txDato, javax.swing.GroupLayout.PREFERRED_SIZE, 308, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(223, 223, 223))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -306,25 +334,24 @@ private BinaryTree tree;
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnCargaArchivoBD)
-                                .addGap(16, 16, 16)
-                                .addComponent(btnGenerarArbol)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(btnImprimirArbol)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(btnLimpiarBD))
-                            .addGroup(layout.createSequentialGroup()
                                 .addComponent(txID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(txEstado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(btnMenu)))
-                        .addContainerGap())
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(btnMenu))
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
                         .addComponent(txDato, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(35, 35, 35))))
+                        .addGap(35, 35, 35))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnCargaArchivoBD)
+                        .addGap(16, 16, 16)
+                        .addComponent(btnGenerarArbol)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnImprimirArbol)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnLimpiarBD)
+                        .addContainerGap())))
         );
 
         pack();
