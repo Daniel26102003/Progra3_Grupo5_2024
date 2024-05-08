@@ -281,6 +281,9 @@
       </SubComponents>
     </Container>
     <Component class="javax.swing.JTextField" name="txDato">
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txDatoActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>

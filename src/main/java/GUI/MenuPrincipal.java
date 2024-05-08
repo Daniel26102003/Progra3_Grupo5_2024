@@ -61,10 +61,8 @@ public class MenuPrincipal extends javax.swing.JFrame {
 
         jPanel1.setBackground(new java.awt.Color(0, 153, 153));
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Menú Principal", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial Black", 0, 18))); // NOI18N
-        jPanel1.setForeground(new java.awt.Color(0, 0, 0));
 
         jButton1.setBackground(new java.awt.Color(0, 153, 255));
-        jButton1.setForeground(new java.awt.Color(0, 0, 0));
         jButton1.setText("Arboles Binarios");
         jButton1.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED, new java.awt.Color(0, 204, 255), new java.awt.Color(0, 153, 255), new java.awt.Color(0, 204, 255), new java.awt.Color(0, 153, 255)));
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -76,6 +74,11 @@ public class MenuPrincipal extends javax.swing.JFrame {
         jButton2.setBackground(new java.awt.Color(0, 153, 255));
         jButton2.setText("Arboles AVL");
         jButton2.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED, new java.awt.Color(0, 204, 255), new java.awt.Color(0, 204, 255), new java.awt.Color(0, 204, 255), new java.awt.Color(0, 204, 255)));
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jButton3.setBackground(new java.awt.Color(0, 153, 255));
         jButton3.setText("YY");
@@ -161,6 +164,11 @@ public class MenuPrincipal extends javax.swing.JFrame {
         Arbolesbinarios vArbolesBin = new Arbolesbinarios();
         dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        ArbolesAVL vArbolesAv = new ArbolesAVL();
+        dispose();
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments

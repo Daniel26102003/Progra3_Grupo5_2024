@@ -264,6 +264,12 @@ private BinaryTree tree;
 
         jScrollPane3.setViewportView(jDesktopPane1);
 
+        txDato.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txDatoActionPerformed(evt);
+            }
+        });
+
         jLabel1.setFont(new java.awt.Font("Arial Black", 0, 18)); // NOI18N
         jLabel1.setText("Árboles Binarios");
 
@@ -423,8 +429,7 @@ private BinaryTree tree;
     }//GEN-LAST:event_tblBDMouseEntered
 
     private void btnCargaArchivoBDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCargaArchivoBDActionPerformed
-        Carga vCarga =new Carga();
-        dispose();
+        
     }//GEN-LAST:event_btnCargaArchivoBDActionPerformed
 
     private void btnMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMenuActionPerformed
@@ -432,6 +437,10 @@ private BinaryTree tree;
         MenuPrincipal vMenu =new MenuPrincipal();
         dispose();
     }//GEN-LAST:event_btnMenuActionPerformed
+
+    private void txDatoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txDatoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txDatoActionPerformed
 
     /**
      * @param args the command line arguments

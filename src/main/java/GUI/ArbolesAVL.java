@@ -4,7 +4,12 @@
  */
 package GUI;
 
+import Clases.AVLTree;
+import Clases.AVLTreePanel;
+import Clases.BinaryTreePanel;
+import Clases.BinaryTree;
 import Conexion.ConexionBD;
+import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.Connection;
@@ -20,40 +25,71 @@ import javax.swing.table.DefaultTableModel;
  * @author Esaú
  */
 public class ArbolesAVL extends javax.swing.JFrame {
+   private BinaryTreePanel treePanel;
+    private BinaryTree tree;
+    
 
-    /**
-     * Creates new form ArbolesAVL
-     */
-    public ArbolesAVL() {
-        initComponents();
-        setVisible(true);
-        this.setLocationRelativeTo(null);
-        cerrar();
+    
+ArbolesAVL() {
+    initComponents(); // Inicializa los componentes gráficos
+    setVisible(true); // Hace visible la ventana
+    setLocationRelativeTo(null); // Centra la ventana en la pantalla
+
+    // Configura el comportamiento de cierre de la ventana
+    cerrar();
+
+    // Inicializar el árbol y el panel del árbol
+    tree = new BinaryTree();
+    treePanel = new BinaryTreePanel(tree);
+    jInternalFrame1.setContentPane(treePanel);
+}
+
+    public BinaryTreePanel getTreePanel() {
+        return treePanel;
     }
-    public void cerrar(){
-        
+
+    public BinaryTree getTree() {
+        return tree;
+    }
+
+    public void cerrar() {
         try {
             this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-            addWindowListener(new WindowAdapter(){
-            
-            public void windowClosing(WindowEvent e){
-                
-             confirmarsalida();
-            }
-        });
-        } catch(Exception e){
-            
-        } 
+            addWindowListener(new WindowAdapter() {
+                public void windowClosing(WindowEvent e) {
+                    confirmarsalida();
+                }
+            });
+        } catch (Exception e) {
+        }
     }
-    
-    public void confirmarsalida(){
-        int valor=JOptionPane.showConfirmDialog(this,"¿Desea cerrar la aplicación?","Advertencia",JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE );
-        if (valor==JOptionPane.YES_OPTION){
-            JOptionPane.showMessageDialog(null,"Hasta pronto","",JOptionPane.INFORMATION_MESSAGE);
+
+    public void confirmarsalida() {
+        int valor = JOptionPane.showConfirmDialog(this, "¿Desea cerrar la aplicación?", "Advertencia", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        if (valor == JOptionPane.YES_OPTION) {
+            JOptionPane.showMessageDialog(null, "Hasta pronto", "", JOptionPane.INFORMATION_MESSAGE);
             System.exit(0);
-        }      
+        }
     }
-    
+    private AVLTree miArbol = new AVLTree();
+    private AVLTreePanel miPanel = new AVLTreePanel(miArbol);
+
+    private void imprimirArbol() {
+    String inputValue = JOptionPane.showInputDialog("Ingrese un número para agregar al árbol:");
+    try {
+        int num = Integer.parseInt(inputValue.trim());
+        miArbol.insert(num);
+        int internalFrameWidth = jInternalFrame1.getWidth();
+        int internalFrameHeight = jInternalFrame1.getHeight();
+        miPanel.setPreferredSize(new Dimension(internalFrameWidth, internalFrameHeight));
+        jInternalFrame1.setContentPane(miPanel);
+        jInternalFrame1.pack();
+        jInternalFrame1.setVisible(true);
+    } catch (NumberFormatException ex) {
+        ex.printStackTrace();
+        JOptionPane.showMessageDialog(null, "Por favor, ingrese un número válido", "Error", JOptionPane.ERROR_MESSAGE);
+    }
+}
     
     
 
@@ -108,7 +144,7 @@ public class ArbolesAVL extends javax.swing.JFrame {
         jInternalFrame1.getContentPane().setLayout(jInternalFrame1Layout);
         jInternalFrame1Layout.setHorizontalGroup(
             jInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 594, Short.MAX_VALUE)
+            .addGap(0, 598, Short.MAX_VALUE)
         );
         jInternalFrame1Layout.setVerticalGroup(
             jInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -146,6 +182,11 @@ public class ArbolesAVL extends javax.swing.JFrame {
 
         btnInsertar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Imprimir.png"))); // NOI18N
         btnInsertar.setText("Insertar Nodo");
+        btnInsertar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnInsertarActionPerformed(evt);
+            }
+        });
 
         btnEliminar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/limpiar.png"))); // NOI18N
         btnEliminar.setText("Eliminar Nodo");
@@ -218,25 +259,23 @@ public class ArbolesAVL extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(139, 139, 139)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(btnInsertar)
-                            .addComponent(btnEliminar))
-                        .addGap(52, 52, 52)
-                        .addComponent(btnMenu))
-                    .addGroup(layout.createSequentialGroup()
                         .addGap(15, 15, 15)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 487, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(131, 131, 131)
-                        .addComponent(btnGuardar)))
+                        .addGap(155, 155, 155)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnInsertar)
+                            .addComponent(btnGuardar)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnEliminar)
+                                .addGap(37, 37, 37)
+                                .addComponent(btnMenu)))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 63, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 624, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(14, Short.MAX_VALUE))
+                        .addContainerGap(32, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(87, 87, 87))))
         );
@@ -252,20 +291,18 @@ public class ArbolesAVL extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(43, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btnInsertar)
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btnEliminar)
+                            .addComponent(btnMenu, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(10, 10, 10)
+                        .addComponent(btnGuardar))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnInsertar)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btnEliminar))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(36, 36, 36)
-                                .addComponent(btnMenu, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(12, 12, 12)
-                        .addComponent(btnGuardar)
-                        .addGap(16, 16, 16))))
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 60, Short.MAX_VALUE)))
+                .addContainerGap())
         );
 
         pack();
@@ -273,9 +310,15 @@ public class ArbolesAVL extends javax.swing.JFrame {
 
     private void btnMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMenuActionPerformed
         // TODO add your handling code here:
-        MenuPrincipal vMenu = new MenuPrincipal();
-        dispose();
     }//GEN-LAST:event_btnMenuActionPerformed
+
+    private void btnInsertarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInsertarActionPerformed
+        imprimirArbol();
+    
+    // Volver a dibujar el árbol con los nuevos nodos
+    treePanel.repaint();
+
+    }//GEN-LAST:event_btnInsertarActionPerformed
 
     /**
      * @param args the command line arguments
