@@ -227,6 +227,46 @@ private void eliminarNodo() {
         JOptionPane.showMessageDialog(null, "Por favor, ingrese un número válido", "Error", JOptionPane.ERROR_MESSAGE);
     }
 }
+private int insertarTipoArbol() {
+        ConexionBD cn = new ConexionBD();
+        Connection con = cn.conexion();
+        try {
+            // Insertar el tipo de árbol
+            PreparedStatement pst = con.prepareStatement("INSERT INTO tipoarbol (NOMBRE, ESTADO) VALUES ('ARBOL AVL', 1)", Statement.RETURN_GENERATED_KEYS);
+            pst.executeUpdate();
+            ResultSet rs = pst.getGeneratedKeys();
+            if (rs.next()) {
+                idTipoArbol = rs.getInt(1);
+            }
+            System.out.println("Tipo de árbol insertado en tipoarbol");
+        } catch (SQLException ex) {
+            System.out.println("Error al insertar tipo de árbol en tipoarbol: " + ex.getMessage());
+        }
+        return idTipoArbol;
+    }
+
+    private void insertarNodoArbol(int dato, int idTipoArbol, int orden) {
+        ConexionBD cn = new ConexionBD();
+        Connection con = cn.conexion();
+        try {
+            String query = "INSERT INTO arbolesavl (Dato, ESTADO, IDTIPOARBOL) VALUES (?, 1, ?)";
+            PreparedStatement pst = con.prepareStatement(query);
+            pst.setInt(1, dato);
+            pst.setInt(2, idTipoArbol);
+            pst.executeUpdate();
+            System.out.println("Nodo insertado en arbolesavl");
+        } catch (SQLException ex) {
+            System.out.println("Error al insertar nodo en arbolesavl: " + ex.getMessage());
+        }
+    }
+
+    private void guardarArbolEnBD(AVLTree.Node nodo, int idTipoArbol, int orden) {
+        if (nodo != null) {
+            insertarNodoArbol(nodo.value, idTipoArbol, orden);
+            guardarArbolEnBD(nodo.left, idTipoArbol, orden + 1);
+            guardarArbolEnBD(nodo.right, idTipoArbol, orden + 1);
+        }
+    }
     
     
 
@@ -336,6 +376,11 @@ private void eliminarNodo() {
 
         btnGuardar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/cargar.png"))); // NOI18N
         btnGuardar.setText("Guardar AVL a BD");
+        btnGuardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGuardarActionPerformed(evt);
+            }
+        });
 
         btnImprimir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Imprimir.png"))); // NOI18N
         btnImprimir.setText("Imprimir Arbol");
@@ -466,6 +511,25 @@ private void eliminarNodo() {
         // TODO add your handling code here:
         eliminarNodo();
     }//GEN-LAST:event_btnEliminarActionPerformed
+
+    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
+        // TODO add your handling code here:
+        if (idTipoArbol == -1) {
+            idTipoArbol = insertarTipoArbol();
+        }
+        
+        // Guardar el árbol en la base de datos
+        if (idTipoArbol != -1) {
+            guardarArbolEnBD(miArbol.getRoot(), idTipoArbol, orden);
+            JOptionPane.showMessageDialog(null, "Árbol guardado en la base de datos.", "Información", JOptionPane.INFORMATION_MESSAGE);
+            // Después de guardar, reiniciar el árbol y el contador de orden
+            nuevoArbol();
+            orden = 0;
+        } else {
+            JOptionPane.showMessageDialog(null, "Error al guardar el árbol en la base de datos.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        mostrarDatosTipoArbol();
+    }//GEN-LAST:event_btnGuardarActionPerformed
 
     /**
      * @param args the command line arguments
