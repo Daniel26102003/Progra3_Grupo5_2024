@@ -15,6 +15,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
 import static javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE;
 import javax.swing.table.DefaultTableModel;
@@ -41,6 +42,7 @@ public class ArbolesAVL extends javax.swing.JFrame {
     miPanel = new AVLTreePanel(miArbol);
     mostrarDatosTipoArbol();
     txDato.setVisible(false);
+    txID.setVisible(false);
 }
 
     public void cerrar() {
@@ -71,7 +73,7 @@ public class ArbolesAVL extends javax.swing.JFrame {
         jInternalFrame1.setContentPane(miPanel);
         jInternalFrame1.pack();
         jInternalFrame1.setVisible(true);
-        idTipoArbol = -1; // Reseteamos el idTipoArbol para crear un nuevo tipo de árbol
+        idTipoArbol = -1; 
     }
     
     public void mostrarDatosTipoArbol() {
@@ -162,88 +164,87 @@ public class ArbolesAVL extends javax.swing.JFrame {
     jInternalFrame1.setContentPane(miPanel);
     jInternalFrame1.pack();
     jInternalFrame1.setVisible(true);
-}
+} 
 
-private boolean obtenerEstadoDesdeBD() {
-    boolean imprimirArbol2 = false;
-    
-    ConexionBD cn = new ConexionBD(); 
-    Connection con = cn.conexion(); 
+    private boolean obtenerEstadoDesdeBD() {
+        boolean imprimirArbol2 = false;
+        String idStr = txID.getText();
+        if (!idStr.isEmpty()) {
+            try {
+                int id = Integer.parseInt(idStr);
 
-    try {
-        String sql = "SELECT ESTADO FROM tipoarbol WHERE NOMBRE = 'Arbol AVL'";
-        PreparedStatement pstmt = con.prepareStatement(sql);
-        
-        ResultSet rs = pstmt.executeQuery();
+                ConexionBD cn = new ConexionBD(); 
+                Connection con = cn.conexion(); 
 
-        if (rs.next()) {
-            int estado = rs.getInt("ESTADO");
-            imprimirArbol2 = (estado != 0);
-        }
+                String sql = "SELECT ESTADO FROM arbolesavl WHERE IDTIPOARBOL = ?";
+                PreparedStatement pstmt = con.prepareStatement(sql);
+                pstmt.setInt(1, id);
 
-        rs.close();
-        pstmt.close();
-    } catch (SQLException e) {
-        System.err.println("Error al obtener el estado del árbol AVL: " + e.getMessage());
-    } finally {
-        try {
-            con.close();
-        } catch (SQLException e) {
-            System.err.println("Error al cerrar la conexión: " + e.getMessage());
-        }
-    }
-    
-    return imprimirArbol2;
-}
-private void imprimirArbol() {
-    String inputValue = JOptionPane.showInputDialog("Ingrese un número para agregar al árbol:");
-    try {
-        int num = Integer.parseInt(inputValue.trim());
-        miPanel.getTree().insert(num);
-        int internalFrameWidth = jInternalFrame1.getWidth();
-        int internalFrameHeight = jInternalFrame1.getHeight();
-        miPanel.setPreferredSize(new Dimension(internalFrameWidth, internalFrameHeight));
-        jInternalFrame1.setContentPane(miPanel);
-        jInternalFrame1.pack();
-        jInternalFrame1.setVisible(true);
-    } catch (NumberFormatException ex) {
-        ex.printStackTrace();
-        JOptionPane.showMessageDialog(null, "Por favor, ingrese un número válido", "Error", JOptionPane.ERROR_MESSAGE);
-    }
-}
-private void eliminarNodo() {
-    String inputValue = JOptionPane.showInputDialog("Ingrese el número que desea eliminar:");
-    try {
-        int num = Integer.parseInt(inputValue.trim());
-        miPanel.getTree().deleteNode(num);
-        int internalFrameWidth = jInternalFrame1.getWidth();
-        int internalFrameHeight = jInternalFrame1.getHeight();
-        miPanel.setPreferredSize(new Dimension(internalFrameWidth, internalFrameHeight));
-        jInternalFrame1.setContentPane(miPanel);
-        jInternalFrame1.pack();
-        jInternalFrame1.setVisible(true);
-    } catch (NumberFormatException ex) {
-        ex.printStackTrace();
-        JOptionPane.showMessageDialog(null, "Por favor, ingrese un número válido", "Error", JOptionPane.ERROR_MESSAGE);
-    }
-}
-private int insertarTipoArbol() {
-        ConexionBD cn = new ConexionBD();
-        Connection con = cn.conexion();
-        try {
-            // Insertar el tipo de árbol
-            PreparedStatement pst = con.prepareStatement("INSERT INTO tipoarbol (NOMBRE, ESTADO) VALUES ('ARBOL AVL', 1)", Statement.RETURN_GENERATED_KEYS);
-            pst.executeUpdate();
-            ResultSet rs = pst.getGeneratedKeys();
-            if (rs.next()) {
-                idTipoArbol = rs.getInt(1);
+                ResultSet rs = pstmt.executeQuery();
+
+                if (rs.next()) {
+                    int estado = rs.getInt("ESTADO");
+                    imprimirArbol2 = (estado != 0);
+                }
+
+                rs.close();
+                pstmt.close();
+                con.close();
+            } catch (NumberFormatException | SQLException e) {
+                System.err.println("Error al obtener el estado: " + e.getMessage());
             }
-            System.out.println("Tipo de árbol insertado en tipoarbol");
-        } catch (SQLException ex) {
-            System.out.println("Error al insertar tipo de árbol en tipoarbol: " + ex.getMessage());
         }
-        return idTipoArbol;
+        return imprimirArbol2;
     }
+
+    private void imprimirArbol() {
+        String inputValue = JOptionPane.showInputDialog("Ingrese un número para agregar al árbol:");
+        try {
+            int num = Integer.parseInt(inputValue.trim());
+            miPanel.getTree().insert(num);
+            int internalFrameWidth = jInternalFrame1.getWidth();
+            int internalFrameHeight = jInternalFrame1.getHeight();
+            miPanel.setPreferredSize(new Dimension(internalFrameWidth, internalFrameHeight));
+            jInternalFrame1.setContentPane(miPanel);
+            jInternalFrame1.pack();
+            jInternalFrame1.setVisible(true);
+        } catch (NumberFormatException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Por favor, ingrese un número válido", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    private void eliminarNodo() {
+        String inputValue = JOptionPane.showInputDialog("Ingrese el número que desea eliminar:");
+        try {
+            int num = Integer.parseInt(inputValue.trim());
+            miPanel.getTree().deleteNode(num);
+            int internalFrameWidth = jInternalFrame1.getWidth();
+            int internalFrameHeight = jInternalFrame1.getHeight();
+            miPanel.setPreferredSize(new Dimension(internalFrameWidth, internalFrameHeight));
+            jInternalFrame1.setContentPane(miPanel);
+            jInternalFrame1.pack();
+            jInternalFrame1.setVisible(true);
+        } catch (NumberFormatException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Por favor, ingrese un número válido", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    private int insertarTipoArbol() {
+            ConexionBD cn = new ConexionBD();
+            Connection con = cn.conexion();
+            try {
+                PreparedStatement pst = con.prepareStatement("INSERT INTO tipoarbol (NOMBRE, ESTADO) VALUES ('ARBOL AVL', 1)", Statement.RETURN_GENERATED_KEYS);
+                pst.executeUpdate();
+                ResultSet rs = pst.getGeneratedKeys();
+                if (rs.next()) {
+                    idTipoArbol = rs.getInt(1);
+                }
+                System.out.println("Tipo de árbol insertado en tipoarbol");
+            } catch (SQLException ex) {
+                System.out.println("Error al insertar tipo de árbol en tipoarbol: " + ex.getMessage());
+            }
+            return idTipoArbol;
+        }
 
     private void insertarNodoArbol(int dato, int idTipoArbol, int orden) {
         ConexionBD cn = new ConexionBD();
@@ -268,6 +269,29 @@ private int insertarTipoArbol() {
         }
     }
     
+    private void actualizarEstado() {
+        String sqlTipoArbol = "UPDATE tipoarbol SET ESTADO = 0 WHERE IDTIPOARBOL = ?";
+        String sqlArbolesAVL = "UPDATE arbolesavl SET ESTADO = 0 WHERE IDTIPOARBOL = ?";
+
+        try { 
+
+            int idTipoArbol = Integer.parseInt(txID.getText());
+
+            PreparedStatement psTipoArbol = con.prepareStatement(sqlTipoArbol);
+            psTipoArbol.setInt(1, idTipoArbol);
+            psTipoArbol.executeUpdate();
+
+            PreparedStatement psArbolesAVL = con.prepareStatement(sqlArbolesAVL);
+            psArbolesAVL.setInt(1, idTipoArbol);
+            psArbolesAVL.executeUpdate();
+
+            con.close();
+            System.out.println("Estado actualizado correctamente.");
+        } catch (SQLException | NumberFormatException ex) {
+            System.err.println("Error al actualizar el estado: " + ex.getMessage());
+        }
+    }
+
     
 
     /**
@@ -292,6 +316,8 @@ private int insertarTipoArbol() {
         btnImprimir = new javax.swing.JButton();
         txDato = new javax.swing.JTextField();
         btnLimpiar = new javax.swing.JButton();
+        btnLimpiarBD = new javax.swing.JButton();
+        txID = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -322,7 +348,7 @@ private int insertarTipoArbol() {
         jInternalFrame1.getContentPane().setLayout(jInternalFrame1Layout);
         jInternalFrame1Layout.setHorizontalGroup(
             jInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 663, Short.MAX_VALUE)
+            .addGap(0, 677, Short.MAX_VALUE)
         );
         jInternalFrame1Layout.setVerticalGroup(
             jInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -338,7 +364,7 @@ private int insertarTipoArbol() {
             .addGroup(jDesktopPane1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jInternalFrame1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addContainerGap(142, Short.MAX_VALUE))
         );
         jDesktopPane1Layout.setVerticalGroup(
             jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -366,7 +392,7 @@ private int insertarTipoArbol() {
             }
         });
 
-        btnEliminar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/limpiar.png"))); // NOI18N
+        btnEliminar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Eliminar Nodo.png"))); // NOI18N
         btnEliminar.setText("Eliminar Nodo");
         btnEliminar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -390,11 +416,19 @@ private int insertarTipoArbol() {
             }
         });
 
-        btnLimpiar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/limpiar.png"))); // NOI18N
+        btnLimpiar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Limpiar Graficos.png"))); // NOI18N
         btnLimpiar.setText("Limpiar Graficos");
         btnLimpiar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnLimpiarActionPerformed(evt);
+            }
+        });
+
+        btnLimpiarBD.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/limpiar.png"))); // NOI18N
+        btnLimpiarBD.setText("Limpiar BD");
+        btnLimpiarBD.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLimpiarBDActionPerformed(evt);
             }
         });
 
@@ -403,26 +437,23 @@ private int insertarTipoArbol() {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(15, 15, 15)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 521, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(496, 496, 496)
-                        .addComponent(jLabel1)))
-                .addGap(15, 15, 15))
+                .addGap(15, 15, 15)
+                .addComponent(jScrollPane1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 631, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(16, 16, 16))
             .addGroup(layout.createSequentialGroup()
                 .addGap(32, 32, 32)
                 .addComponent(btnInsertar)
                 .addGap(43, 43, 43)
-                .addComponent(btnEliminar)
-                .addGap(32, 32, 32)
-                .addComponent(btnGuardar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 93, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnLimpiarBD, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnEliminar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(43, 43, 43)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(btnGuardar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 86, Short.MAX_VALUE)
                         .addComponent(btnLimpiar)
                         .addGap(41, 41, 41)
                         .addComponent(btnImprimir)
@@ -430,8 +461,15 @@ private int insertarTipoArbol() {
                         .addComponent(btnMenu)
                         .addGap(48, 48, 48))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(txID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
                         .addComponent(txDato, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(273, 273, 273))))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(529, 529, 529)
+                .addComponent(jLabel1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -451,14 +489,18 @@ private int insertarTipoArbol() {
                                 .addComponent(btnLimpiar)
                                 .addComponent(btnImprimir)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(txDato, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txDato, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(37, 37, 37)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btnGuardar)
                             .addComponent(btnEliminar)
-                            .addComponent(btnInsertar))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(btnInsertar))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnLimpiarBD)))
+                .addContainerGap(12, Short.MAX_VALUE))
         );
 
         pack();
@@ -476,7 +518,8 @@ private int insertarTipoArbol() {
 
     private void btnImprimirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImprimirActionPerformed
         // TODO add your handling code here:
-        if (!txDato.getText().isEmpty()) {
+       nuevoArbol();
+    if (!txDato.getText().isEmpty()) {
         imprimirArbol2();
     } else {
         JOptionPane.showMessageDialog(this, "Seleccione al menos un valor para imprimir el árbol", "Advertencia", JOptionPane.WARNING_MESSAGE);
@@ -488,6 +531,7 @@ private int insertarTipoArbol() {
         txDato.setEditable(false);
         int fila=this.tblBD.getSelectedRow();
         this.txDato.setText(this.tblBD.getValueAt(fila, 2).toString());
+        this.txID.setText(this.tblBD.getValueAt(fila, 0).toString());
         AVLTree tree = new AVLTree();
 
     String input = txDato.getText();
@@ -517,12 +561,9 @@ private int insertarTipoArbol() {
         if (idTipoArbol == -1) {
             idTipoArbol = insertarTipoArbol();
         }
-        
-        // Guardar el árbol en la base de datos
         if (idTipoArbol != -1) {
             guardarArbolEnBD(miArbol.getRoot(), idTipoArbol, orden);
             JOptionPane.showMessageDialog(null, "Árbol guardado en la base de datos.", "Información", JOptionPane.INFORMATION_MESSAGE);
-            // Después de guardar, reiniciar el árbol y el contador de orden
             nuevoArbol();
             orden = 0;
         } else {
@@ -530,6 +571,12 @@ private int insertarTipoArbol() {
         }
         mostrarDatosTipoArbol();
     }//GEN-LAST:event_btnGuardarActionPerformed
+
+    private void btnLimpiarBDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarBDActionPerformed
+        // TODO add your handling code here:
+        actualizarEstado();
+        mostrarDatosTipoArbol();
+    }//GEN-LAST:event_btnLimpiarBDActionPerformed
 
     /**
      * @param args the command line arguments
@@ -541,6 +588,7 @@ private int insertarTipoArbol() {
     private javax.swing.JButton btnImprimir;
     private javax.swing.JButton btnInsertar;
     private javax.swing.JButton btnLimpiar;
+    private javax.swing.JButton btnLimpiarBD;
     private javax.swing.JButton btnMenu;
     private javax.swing.JDesktopPane jDesktopPane1;
     private javax.swing.JInternalFrame jInternalFrame1;
@@ -549,6 +597,7 @@ private int insertarTipoArbol() {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable tblBD;
     private javax.swing.JTextField txDato;
+    private javax.swing.JTextField txID;
     // End of variables declaration//GEN-END:variables
 ConexionBD cn = new ConexionBD();
 Connection con = cn.conexion();
