@@ -6,13 +6,12 @@ package GUI;
 
 import Clases.AVLTree;
 import Clases.AVLTreePanel;
-import Clases.BinaryTreePanel;
-import Clases.BinaryTree;
 import Conexion.ConexionBD;
 import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -25,32 +24,19 @@ import javax.swing.table.DefaultTableModel;
  * @author Esaú
  */
 public class ArbolesAVL extends javax.swing.JFrame {
-   private BinaryTreePanel treePanel;
-    private BinaryTree tree;
+    private AVLTree miArbol;
+    private AVLTreePanel miPanel;
+    private int idTipoArbol = -1;
     
-
-    
-ArbolesAVL() {
-    initComponents(); // Inicializa los componentes gráficos
-    setVisible(true); // Hace visible la ventana
-    setLocationRelativeTo(null); // Centra la ventana en la pantalla
-
-    // Configura el comportamiento de cierre de la ventana
+    ArbolesAVL() {
+        
+    initComponents(); 
+    setVisible(true);
+    setLocationRelativeTo(null);
     cerrar();
-
-    // Inicializar el árbol y el panel del árbol
-    tree = new BinaryTree();
-    treePanel = new BinaryTreePanel(tree);
-    jInternalFrame1.setContentPane(treePanel);
+    mostrarDatosTipoArbol();
+    txDato.setVisible(false);
 }
-
-    public BinaryTreePanel getTreePanel() {
-        return treePanel;
-    }
-
-    public BinaryTree getTree() {
-        return tree;
-    }
 
     public void cerrar() {
         try {
@@ -71,14 +57,24 @@ ArbolesAVL() {
             System.exit(0);
         }
     }
-    private AVLTree miArbol = new AVLTree();
-    private AVLTreePanel miPanel = new AVLTreePanel(miArbol);
+    private void nuevoArbol() {
+        miArbol = new AVLTree();
+        miPanel = new AVLTreePanel(miArbol);
+        int internalFrameWidth = jInternalFrame1.getWidth();
+        int internalFrameHeight = jInternalFrame1.getHeight();
+        miPanel.setPreferredSize(new Dimension(internalFrameWidth, internalFrameHeight));
+        jInternalFrame1.setContentPane(miPanel);
+        jInternalFrame1.pack();
+        jInternalFrame1.setVisible(true);
+        idTipoArbol = -1; // Reseteamos el idTipoArbol para crear un nuevo tipo de árbol
+    }
+    
 
     private void imprimirArbol() {
     String inputValue = JOptionPane.showInputDialog("Ingrese un número para agregar al árbol:");
     try {
         int num = Integer.parseInt(inputValue.trim());
-        miArbol.insert(num);
+        miPanel.getTree().insert(num);
         int internalFrameWidth = jInternalFrame1.getWidth();
         int internalFrameHeight = jInternalFrame1.getHeight();
         miPanel.setPreferredSize(new Dimension(internalFrameWidth, internalFrameHeight));
@@ -89,6 +85,111 @@ ArbolesAVL() {
         ex.printStackTrace();
         JOptionPane.showMessageDialog(null, "Por favor, ingrese un número válido", "Error", JOptionPane.ERROR_MESSAGE);
     }
+}
+    
+    public void mostrarDatosTipoArbol() {
+    ConexionBD cn = new ConexionBD(); 
+    Connection con = cn.conexion(); 
+
+    try {
+        String sql = "SELECT t.IDTIPOARBOL, t.NOMBRE, " +
+                     "GROUP_CONCAT(a.Dato ORDER BY a.ID ASC SEPARATOR ',') AS Datos, " +
+                     "t.ESTADO " +
+                     "FROM tipoarbol t " +
+                     "JOIN arbolesavl a ON t.IDTIPOARBOL = a.IDTIPOARBOL " +
+                     "WHERE t.NOMBRE = 'Arbol AVL' " +
+                     "GROUP BY t.IDTIPOARBOL";
+                     
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+        
+        DefaultTableModel modelo = new DefaultTableModel();
+        modelo.addColumn("ID Tipo Árbol");
+        modelo.addColumn("Nombre");
+        modelo.addColumn("Datos");
+        modelo.addColumn("Estado");
+
+        while (rs.next()) {
+            Object[] fila = new Object[4];
+            fila[0] = rs.getString("IDTIPOARBOL");
+            fila[1] = rs.getString("NOMBRE");
+            fila[2] = rs.getString("Datos");
+            fila[3] = rs.getString("ESTADO");
+            modelo.addRow(fila);
+        }
+        
+        tblBD.setModel(modelo);
+        rs.close();
+        stmt.close();
+        con.close();
+    } catch (SQLException e) {
+        System.err.println("Error al obtener los datos: " + e.getMessage());
+    }
+}
+    
+    private void imprimirArbol2() {
+    boolean imprimirArbol2 = obtenerEstadoDesdeBD();
+    if (!imprimirArbol2) {
+        JOptionPane.showMessageDialog(null, "No se puede graficar el árbol porque el estado es 0.", "Mensaje de Alerta", JOptionPane.WARNING_MESSAGE);
+        return; 
+    }
+    
+    String inputValue = txDato.getText();
+    if (inputValue == null || inputValue.isEmpty()) {
+        JOptionPane.showMessageDialog(null, "Por favor, ingrese al menos un número.", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+    
+    String[] values = inputValue.split(",");
+    AVLTree tree = miPanel.getTree();
+    
+    for (String value : values) {
+        try {
+            int num = Integer.parseInt(value.trim());
+            tree.insert(num);
+        } catch (NumberFormatException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    int internalFrameWidth = jInternalFrame1.getWidth();
+    int internalFrameHeight = jInternalFrame1.getHeight();
+    miPanel.setPreferredSize(new Dimension(internalFrameWidth, internalFrameHeight));
+    jInternalFrame1.setContentPane(miPanel);
+    jInternalFrame1.pack();
+    jInternalFrame1.setVisible(true);
+}
+
+private boolean obtenerEstadoDesdeBD() {
+    boolean imprimirArbol2 = false;
+    
+    ConexionBD cn = new ConexionBD(); 
+    Connection con = cn.conexion(); 
+
+    try {
+        String sql = "SELECT ESTADO FROM tipoarbol WHERE NOMBRE = 'Arbol AVL'";
+        PreparedStatement pstmt = con.prepareStatement(sql);
+        
+        ResultSet rs = pstmt.executeQuery();
+
+        if (rs.next()) {
+            int estado = rs.getInt("ESTADO");
+            imprimirArbol2 = (estado != 0);
+        }
+
+        rs.close();
+        pstmt.close();
+    } catch (SQLException e) {
+        System.err.println("Error al obtener el estado del árbol AVL: " + e.getMessage());
+    } finally {
+        try {
+            con.close();
+        } catch (SQLException e) {
+            System.err.println("Error al cerrar la conexión: " + e.getMessage());
+        }
+    }
+    
+    return imprimirArbol2;
 }
     
     
@@ -103,7 +204,7 @@ ArbolesAVL() {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblBDAVL = new javax.swing.JTable();
+        tblBD = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jDesktopPane1 = new javax.swing.JDesktopPane();
@@ -112,17 +213,13 @@ ArbolesAVL() {
         btnInsertar = new javax.swing.JButton();
         btnEliminar = new javax.swing.JButton();
         btnGuardar = new javax.swing.JButton();
-        jPanel1 = new javax.swing.JPanel();
-        btnValidar = new javax.swing.JButton();
-        btnIzqIzq = new javax.swing.JButton();
-        btnDerDer = new javax.swing.JButton();
-        btnIzqDer = new javax.swing.JButton();
-        btnDerIzq = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
+        btnImprimir = new javax.swing.JButton();
+        txDato = new javax.swing.JTextField();
+        btnLimpiar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        tblBDAVL.setModel(new javax.swing.table.DefaultTableModel(
+        tblBD.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -133,7 +230,12 @@ ArbolesAVL() {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(tblBDAVL);
+        tblBD.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblBDMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tblBD);
 
         jLabel1.setFont(new java.awt.Font("Arial Black", 0, 18)); // NOI18N
         jLabel1.setText("Arboles AVL");
@@ -144,7 +246,7 @@ ArbolesAVL() {
         jInternalFrame1.getContentPane().setLayout(jInternalFrame1Layout);
         jInternalFrame1Layout.setHorizontalGroup(
             jInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 598, Short.MAX_VALUE)
+            .addGap(0, 663, Short.MAX_VALUE)
         );
         jInternalFrame1Layout.setVerticalGroup(
             jInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -159,8 +261,8 @@ ArbolesAVL() {
             jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jDesktopPane1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jInternalFrame1)
-                .addContainerGap())
+                .addComponent(jInternalFrame1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(21, Short.MAX_VALUE))
         );
         jDesktopPane1Layout.setVerticalGroup(
             jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -194,90 +296,56 @@ ArbolesAVL() {
         btnGuardar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/cargar.png"))); // NOI18N
         btnGuardar.setText("Guardar AVL a BD");
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "OPCIONES", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial Black", 0, 12))); // NOI18N
+        btnImprimir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Imprimir.png"))); // NOI18N
+        btnImprimir.setText("Imprimir Arbol");
+        btnImprimir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnImprimirActionPerformed(evt);
+            }
+        });
 
-        btnValidar.setText("VALIDAR AVL");
-
-        btnIzqIzq.setText("IZQ-IZQ");
-
-        btnDerDer.setText("DER-DER");
-
-        btnIzqDer.setText("IZQ-DER");
-
-        btnDerIzq.setText("DER-IZQ");
-
-        jLabel2.setFont(new java.awt.Font("Arial Black", 0, 12)); // NOI18N
-        jLabel2.setText("ROTACIONES");
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(32, 32, 32)
-                        .addComponent(btnIzqIzq)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnDerDer)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnIzqDer)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnDerIzq))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(162, 162, 162)
-                        .addComponent(btnValidar))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(165, 165, 165)
-                        .addComponent(jLabel2)))
-                .addContainerGap(34, Short.MAX_VALUE))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel2)
-                .addGap(5, 5, 5)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnIzqIzq)
-                    .addComponent(btnDerDer)
-                    .addComponent(btnIzqDer)
-                    .addComponent(btnDerIzq))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnValidar)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        btnLimpiar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/limpiar.png"))); // NOI18N
+        btnLimpiar.setText("Limpiar Graficos");
+        btnLimpiar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLimpiarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(505, 505, 505))
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(15, 15, 15)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 487, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 521, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(155, 155, 155)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnInsertar)
-                            .addComponent(btnGuardar)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnEliminar)
-                                .addGap(37, 37, 37)
-                                .addComponent(btnMenu)))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 63, Short.MAX_VALUE)
+                        .addGap(496, 496, 496)
+                        .addComponent(jLabel1)))
+                .addGap(15, 15, 15))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(32, 32, 32)
+                .addComponent(btnInsertar)
+                .addGap(43, 43, 43)
+                .addComponent(btnEliminar)
+                .addGap(32, 32, 32)
+                .addComponent(btnGuardar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 93, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 624, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(32, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(87, 87, 87))))
+                        .addComponent(btnLimpiar)
+                        .addGap(41, 41, 41)
+                        .addComponent(btnImprimir)
+                        .addGap(46, 46, 46)
+                        .addComponent(btnMenu)
+                        .addGap(48, 48, 48))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(txDato, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(273, 273, 273))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -288,21 +356,23 @@ ArbolesAVL() {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jScrollPane1)
                     .addComponent(jScrollPane2))
-                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btnInsertar)
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnEliminar)
-                            .addComponent(btnMenu, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(10, 10, 10)
-                        .addComponent(btnGuardar))
+                        .addGap(27, 27, 27)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnMenu, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(btnLimpiar)
+                                .addComponent(btnImprimir)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txDato, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 60, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addGap(37, 37, 37)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btnGuardar)
+                            .addComponent(btnEliminar)
+                            .addComponent(btnInsertar))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -310,37 +380,66 @@ ArbolesAVL() {
 
     private void btnMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMenuActionPerformed
         // TODO add your handling code here:
+        MenuPrincipal vMenu = new MenuPrincipal();
+        dispose();
     }//GEN-LAST:event_btnMenuActionPerformed
 
     private void btnInsertarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInsertarActionPerformed
         imprimirArbol();
-    
-    // Volver a dibujar el árbol con los nuevos nodos
-    treePanel.repaint();
-
     }//GEN-LAST:event_btnInsertarActionPerformed
+
+    private void btnImprimirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImprimirActionPerformed
+        // TODO add your handling code here:
+        if (!txDato.getText().isEmpty()) {
+        imprimirArbol2();
+    } else {
+        JOptionPane.showMessageDialog(this, "Seleccione al menos un valor para imprimir el árbol", "Advertencia", JOptionPane.WARNING_MESSAGE);
+    }
+    }//GEN-LAST:event_btnImprimirActionPerformed
+
+    private void tblBDMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblBDMouseClicked
+        // TODO add your handling code here:
+        txDato.setEditable(false);
+        int fila=this.tblBD.getSelectedRow();
+        this.txDato.setText(this.tblBD.getValueAt(fila, 2).toString());
+        AVLTree tree = new AVLTree();
+
+    String input = txDato.getText();
+    String[] values = input.split(",");
+    for (String value : values) {
+        try {
+            int num = Integer.parseInt(value.trim());
+            tree.insert(num);
+        } catch (NumberFormatException ex) {
+            ex.printStackTrace();
+        }
+    }
+    }//GEN-LAST:event_tblBDMouseClicked
+
+    private void btnLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarActionPerformed
+        // TODO add your handling code here:
+        nuevoArbol();
+    }//GEN-LAST:event_btnLimpiarActionPerformed
 
     /**
      * @param args the command line arguments
      */
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnDerDer;
-    private javax.swing.JButton btnDerIzq;
     private javax.swing.JButton btnEliminar;
     private javax.swing.JButton btnGuardar;
+    private javax.swing.JButton btnImprimir;
     private javax.swing.JButton btnInsertar;
-    private javax.swing.JButton btnIzqDer;
-    private javax.swing.JButton btnIzqIzq;
+    private javax.swing.JButton btnLimpiar;
     private javax.swing.JButton btnMenu;
-    private javax.swing.JButton btnValidar;
     private javax.swing.JDesktopPane jDesktopPane1;
     private javax.swing.JInternalFrame jInternalFrame1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable tblBDAVL;
+    private javax.swing.JTable tblBD;
+    private javax.swing.JTextField txDato;
     // End of variables declaration//GEN-END:variables
+ConexionBD cn = new ConexionBD();
+Connection con = cn.conexion();
 }
