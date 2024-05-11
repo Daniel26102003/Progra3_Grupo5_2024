@@ -19,6 +19,9 @@ public class AVLTreePanel extends JPanel {
     public AVLTreePanel(AVLTree tree) {
         this.tree = tree;
     }
+    public AVLTree getTree() {
+    return tree;
+}
 
     @Override
     protected void paintComponent(Graphics g) {
