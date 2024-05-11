@@ -27,6 +27,9 @@ public class ArbolesAVL extends javax.swing.JFrame {
     private AVLTree miArbol;
     private AVLTreePanel miPanel;
     private int idTipoArbol = -1;
+    private int orden = 0;
+    private int cantidadNodos = 0;
+    
     
     ArbolesAVL() {
         
@@ -34,6 +37,8 @@ public class ArbolesAVL extends javax.swing.JFrame {
     setVisible(true);
     setLocationRelativeTo(null);
     cerrar();
+    miArbol = new AVLTree();
+    miPanel = new AVLTreePanel(miArbol);
     mostrarDatosTipoArbol();
     txDato.setVisible(false);
 }
@@ -68,24 +73,6 @@ public class ArbolesAVL extends javax.swing.JFrame {
         jInternalFrame1.setVisible(true);
         idTipoArbol = -1; // Reseteamos el idTipoArbol para crear un nuevo tipo de árbol
     }
-    
-
-    private void imprimirArbol() {
-    String inputValue = JOptionPane.showInputDialog("Ingrese un número para agregar al árbol:");
-    try {
-        int num = Integer.parseInt(inputValue.trim());
-        miPanel.getTree().insert(num);
-        int internalFrameWidth = jInternalFrame1.getWidth();
-        int internalFrameHeight = jInternalFrame1.getHeight();
-        miPanel.setPreferredSize(new Dimension(internalFrameWidth, internalFrameHeight));
-        jInternalFrame1.setContentPane(miPanel);
-        jInternalFrame1.pack();
-        jInternalFrame1.setVisible(true);
-    } catch (NumberFormatException ex) {
-        ex.printStackTrace();
-        JOptionPane.showMessageDialog(null, "Por favor, ingrese un número válido", "Error", JOptionPane.ERROR_MESSAGE);
-    }
-}
     
     public void mostrarDatosTipoArbol() {
     ConexionBD cn = new ConexionBD(); 
@@ -124,6 +111,19 @@ public class ArbolesAVL extends javax.swing.JFrame {
         con.close();
     } catch (SQLException e) {
         System.err.println("Error al obtener los datos: " + e.getMessage());
+    }
+}
+    
+   
+    private void imprimirArbol(AVLTree tree) {
+    if (miPanel == null) {
+        miPanel = new AVLTreePanel(tree);
+        miPanel.setPreferredSize(new Dimension(800, 600));
+        jInternalFrame1.setContentPane(miPanel);
+        jInternalFrame1.pack();
+        jInternalFrame1.setVisible(true);
+    } else {
+        miPanel.repaint();
     }
 }
     
@@ -190,6 +190,22 @@ private boolean obtenerEstadoDesdeBD() {
     }
     
     return imprimirArbol2;
+}
+private void imprimirArbol() {
+    String inputValue = JOptionPane.showInputDialog("Ingrese un número para agregar al árbol:");
+    try {
+        int num = Integer.parseInt(inputValue.trim());
+        miPanel.getTree().insert(num);
+        int internalFrameWidth = jInternalFrame1.getWidth();
+        int internalFrameHeight = jInternalFrame1.getHeight();
+        miPanel.setPreferredSize(new Dimension(internalFrameWidth, internalFrameHeight));
+        jInternalFrame1.setContentPane(miPanel);
+        jInternalFrame1.pack();
+        jInternalFrame1.setVisible(true);
+    } catch (NumberFormatException ex) {
+        ex.printStackTrace();
+        JOptionPane.showMessageDialog(null, "Por favor, ingrese un número válido", "Error", JOptionPane.ERROR_MESSAGE);
+    }
 }
     
     
