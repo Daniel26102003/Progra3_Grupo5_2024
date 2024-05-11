@@ -79,4 +79,26 @@ public class AVLTreePanel extends JPanel {
             }
         });
     }
+    public void eliminarNodo(int valor) {
+        if (tree.getRoot() == null) {
+            JOptionPane.showMessageDialog(null, "El árbol está vacío", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        tree.deleteNode(valor);
+        repaint();
+    }
+
+    public void agregarMetodoBotonEliminar(JButton boton, JTextField campoTexto) {
+        boton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    int valor = Integer.parseInt(campoTexto.getText());
+                    eliminarNodo(valor);
+                    campoTexto.setText("");
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(AVLTreePanel.this, "Por favor, ingresa un número válido", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+    }
 }

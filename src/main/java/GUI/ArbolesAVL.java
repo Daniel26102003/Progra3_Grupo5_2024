@@ -126,6 +126,10 @@ public class ArbolesAVL extends javax.swing.JFrame {
         miPanel.repaint();
     }
 }
+    private void eliminarNodo(AVLTree tree, int num) {
+    tree.deleteNode(num);
+    miPanel.repaint();
+}
     
     private void imprimirArbol2() {
     boolean imprimirArbol2 = obtenerEstadoDesdeBD();
@@ -196,6 +200,22 @@ private void imprimirArbol() {
     try {
         int num = Integer.parseInt(inputValue.trim());
         miPanel.getTree().insert(num);
+        int internalFrameWidth = jInternalFrame1.getWidth();
+        int internalFrameHeight = jInternalFrame1.getHeight();
+        miPanel.setPreferredSize(new Dimension(internalFrameWidth, internalFrameHeight));
+        jInternalFrame1.setContentPane(miPanel);
+        jInternalFrame1.pack();
+        jInternalFrame1.setVisible(true);
+    } catch (NumberFormatException ex) {
+        ex.printStackTrace();
+        JOptionPane.showMessageDialog(null, "Por favor, ingrese un número válido", "Error", JOptionPane.ERROR_MESSAGE);
+    }
+}
+private void eliminarNodo() {
+    String inputValue = JOptionPane.showInputDialog("Ingrese el número que desea eliminar:");
+    try {
+        int num = Integer.parseInt(inputValue.trim());
+        miPanel.getTree().deleteNode(num);
         int internalFrameWidth = jInternalFrame1.getWidth();
         int internalFrameHeight = jInternalFrame1.getHeight();
         miPanel.setPreferredSize(new Dimension(internalFrameWidth, internalFrameHeight));
@@ -308,6 +328,11 @@ private void imprimirArbol() {
 
         btnEliminar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/limpiar.png"))); // NOI18N
         btnEliminar.setText("Eliminar Nodo");
+        btnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarActionPerformed(evt);
+            }
+        });
 
         btnGuardar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/cargar.png"))); // NOI18N
         btnGuardar.setText("Guardar AVL a BD");
@@ -436,6 +461,11 @@ private void imprimirArbol() {
         // TODO add your handling code here:
         nuevoArbol();
     }//GEN-LAST:event_btnLimpiarActionPerformed
+
+    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+        // TODO add your handling code here:
+        eliminarNodo();
+    }//GEN-LAST:event_btnEliminarActionPerformed
 
     /**
      * @param args the command line arguments
