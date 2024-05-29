@@ -4,22 +4,36 @@
  */
 package GUI;
 
+import Clases.MemoryInputDialog;
+import Clases.MemoryPanel;
+import java.awt.Dimension;
+
 
 /**
  *
  * @author Esaú
  */
 public class AdmMemoria extends javax.swing.JFrame {
-
+    
     /**
      * Creates new form AdmMemoria
      */
+    
     public AdmMemoria() {
         initComponents();
         this.setLocationRelativeTo(null);
         setVisible(true);
+        
     }
-
+        
+    
+    
+     private void setMemoryPanelContent(MemoryPanel memoryPanel) {
+        JInternalFrame1.setContentPane(memoryPanel);
+        JInternalFrame1.pack();
+     }
+     
+   
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -32,107 +46,117 @@ public class AdmMemoria extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jDesktopPane1 = new javax.swing.JDesktopPane();
-        jInternalFrame1 = new javax.swing.JInternalFrame();
+        JInternalFrame1 = new javax.swing.JInternalFrame();
         jLabel2 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jDesktopPane2 = new javax.swing.JDesktopPane();
-        jInternalFrame2 = new javax.swing.JInternalFrame();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
+        JInternalFrame2 = new javax.swing.JInternalFrame();
+        btnIngresar = new javax.swing.JButton();
+        btnPrimerajuste = new javax.swing.JButton();
+        btnMejorajuste = new javax.swing.JButton();
+        btnPeorajuste = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
-        jButton5 = new javax.swing.JButton();
+        btnMenu = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Arial Black", 0, 24)); // NOI18N
         jLabel1.setText("Administrador de Memoria");
 
-        jInternalFrame1.setVisible(true);
+        JInternalFrame1.setVisible(true);
 
-        javax.swing.GroupLayout jInternalFrame1Layout = new javax.swing.GroupLayout(jInternalFrame1.getContentPane());
-        jInternalFrame1.getContentPane().setLayout(jInternalFrame1Layout);
-        jInternalFrame1Layout.setHorizontalGroup(
-            jInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout JInternalFrame1Layout = new javax.swing.GroupLayout(JInternalFrame1.getContentPane());
+        JInternalFrame1.getContentPane().setLayout(JInternalFrame1Layout);
+        JInternalFrame1Layout.setHorizontalGroup(
+            JInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 486, Short.MAX_VALUE)
         );
-        jInternalFrame1Layout.setVerticalGroup(
-            jInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        JInternalFrame1Layout.setVerticalGroup(
+            JInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 313, Short.MAX_VALUE)
         );
 
-        jDesktopPane1.setLayer(jInternalFrame1, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jDesktopPane1.setLayer(JInternalFrame1, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout jDesktopPane1Layout = new javax.swing.GroupLayout(jDesktopPane1);
         jDesktopPane1.setLayout(jDesktopPane1Layout);
         jDesktopPane1Layout.setHorizontalGroup(
             jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jInternalFrame1)
+            .addComponent(JInternalFrame1)
         );
         jDesktopPane1Layout.setVerticalGroup(
             jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jInternalFrame1)
+            .addComponent(JInternalFrame1)
         );
 
         jScrollPane1.setViewportView(jDesktopPane1);
 
-        jLabel2.setText("-----------");
+        jLabel2.setText("Memoria:");
 
-        jInternalFrame2.setVisible(true);
+        JInternalFrame2.setVisible(true);
 
-        javax.swing.GroupLayout jInternalFrame2Layout = new javax.swing.GroupLayout(jInternalFrame2.getContentPane());
-        jInternalFrame2.getContentPane().setLayout(jInternalFrame2Layout);
-        jInternalFrame2Layout.setHorizontalGroup(
-            jInternalFrame2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout JInternalFrame2Layout = new javax.swing.GroupLayout(JInternalFrame2.getContentPane());
+        JInternalFrame2.getContentPane().setLayout(JInternalFrame2Layout);
+        JInternalFrame2Layout.setHorizontalGroup(
+            JInternalFrame2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 487, Short.MAX_VALUE)
         );
-        jInternalFrame2Layout.setVerticalGroup(
-            jInternalFrame2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        JInternalFrame2Layout.setVerticalGroup(
+            JInternalFrame2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 313, Short.MAX_VALUE)
         );
 
-        jDesktopPane2.setLayer(jInternalFrame2, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jDesktopPane2.setLayer(JInternalFrame2, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout jDesktopPane2Layout = new javax.swing.GroupLayout(jDesktopPane2);
         jDesktopPane2.setLayout(jDesktopPane2Layout);
         jDesktopPane2Layout.setHorizontalGroup(
             jDesktopPane2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jInternalFrame2)
+            .addComponent(JInternalFrame2)
         );
         jDesktopPane2Layout.setVerticalGroup(
             jDesktopPane2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jInternalFrame2)
+            .addComponent(JInternalFrame2)
         );
 
         jScrollPane2.setViewportView(jDesktopPane2);
 
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/ingresar.png"))); // NOI18N
-        jButton1.setText("Ingresar Memoria");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnIngresar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/ingresar.png"))); // NOI18N
+        btnIngresar.setText("Ingresar Memoria");
+        btnIngresar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnIngresarActionPerformed(evt);
             }
         });
 
-        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Primer ajuste.png"))); // NOI18N
-        jButton2.setText("Primer Ajuste");
+        btnPrimerajuste.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Primer ajuste.png"))); // NOI18N
+        btnPrimerajuste.setText("Primer Ajuste");
 
-        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/ajuste.png"))); // NOI18N
-        jButton3.setText("Mejor Ajuste");
-
-        jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/voto-negativo.png"))); // NOI18N
-        jButton4.setText("Peor Ajuste");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        btnMejorajuste.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/ajuste.png"))); // NOI18N
+        btnMejorajuste.setText("Mejor Ajuste");
+        btnMejorajuste.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+                btnMejorajusteActionPerformed(evt);
             }
         });
 
-        jLabel3.setText("jLabel3");
+        btnPeorajuste.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/voto-negativo.png"))); // NOI18N
+        btnPeorajuste.setText("Peor Ajuste");
+        btnPeorajuste.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPeorajusteActionPerformed(evt);
+            }
+        });
 
-        jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/regresar.png"))); // NOI18N
-        jButton5.setText("Menú Principal");
+        jLabel3.setText("Memoria con configuración:");
+
+        btnMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/regresar.png"))); // NOI18N
+        btnMenu.setText("Menú Principal");
+        btnMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMenuActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -148,7 +172,7 @@ public class AdmMemoria extends javax.swing.JFrame {
                         .addGap(15, 15, 15)
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(412, 412, 412)
-                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jLabel3))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 500, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -157,15 +181,15 @@ public class AdmMemoria extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addGap(93, 93, 93)
-                .addComponent(jButton1)
+                .addComponent(btnIngresar)
                 .addGap(53, 53, 53)
-                .addComponent(jButton5)
+                .addComponent(btnMenu)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton2)
+                .addComponent(btnPrimerajuste)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton3)
+                .addComponent(btnMejorajuste)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton4)
+                .addComponent(btnPeorajuste)
                 .addGap(26, 26, 26))
         );
         layout.setVerticalGroup(
@@ -183,40 +207,59 @@ public class AdmMemoria extends javax.swing.JFrame {
                     .addComponent(jScrollPane1))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3)
-                    .addComponent(jButton4)
-                    .addComponent(jButton5))
+                    .addComponent(btnIngresar)
+                    .addComponent(btnPrimerajuste)
+                    .addComponent(btnMejorajuste)
+                    .addComponent(btnPeorajuste)
+                    .addComponent(btnMenu))
                 .addContainerGap(8, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+    private void btnPeorajusteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPeorajusteActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton4ActionPerformed
+    }//GEN-LAST:event_btnPeorajusteActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:                                        
+    private void btnIngresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIngresarActionPerformed
+       MemoryInputDialog dialog = new MemoryInputDialog(this);
+        dialog.setVisible(true);
 
-    }//GEN-LAST:event_jButton1ActionPerformed
+        if (dialog.isConfirmed()) {
+            int size = dialog.getMemorySize();
+            String unit = dialog.getUnit();
+            int partitions = dialog.getPartitions();
+
+            MemoryPanel memoryPanel = new MemoryPanel(size, partitions, unit);
+            setMemoryPanelContent(memoryPanel);
+        }
+    }//GEN-LAST:event_btnIngresarActionPerformed
+
+    private void btnMejorajusteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMejorajusteActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnMejorajusteActionPerformed
+
+    private void btnMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMenuActionPerformed
+        // TODO add your handling code here:
+        MenuPrincipal vMenu = new MenuPrincipal();
+        dispose();
+    }//GEN-LAST:event_btnMenuActionPerformed
 
     /**
      * @param args the command line arguments
      */
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
+    private javax.swing.JInternalFrame JInternalFrame1;
+    private javax.swing.JInternalFrame JInternalFrame2;
+    private javax.swing.JButton btnIngresar;
+    private javax.swing.JButton btnMejorajuste;
+    private javax.swing.JButton btnMenu;
+    private javax.swing.JButton btnPeorajuste;
+    private javax.swing.JButton btnPrimerajuste;
     private javax.swing.JDesktopPane jDesktopPane1;
     private javax.swing.JDesktopPane jDesktopPane2;
-    private javax.swing.JInternalFrame jInternalFrame1;
-    private javax.swing.JInternalFrame jInternalFrame2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
