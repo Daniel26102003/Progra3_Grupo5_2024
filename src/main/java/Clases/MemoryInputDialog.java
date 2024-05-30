@@ -8,8 +8,6 @@ package Clases;
  *
  * @author Esaú_Pu
  */
-
-
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
