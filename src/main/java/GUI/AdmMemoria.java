@@ -30,50 +30,46 @@ public class AdmMemoria extends javax.swing.JFrame {
         setVisible(true);
         
     }
-    private void applyFirstFitAlgorithm(int newPartitionSize) {
-    int partitions = memoryPanel1.getPartitions();
-    int[] partitionSizes = Arrays.copyOf(memoryPanel1.getPartitionSizes(), partitions);
-    boolean[] isAssigned = Arrays.copyOf(memoryPanel1.getAssignedPartitions(), partitions);
+        private void applyFirstFitAlgorithm(int newPartitionSize) {
+        int partitions = memoryPanel1.getPartitions();
+        int[] partitionSizes = Arrays.copyOf(memoryPanel1.getPartitionSizes(), partitions);
+        boolean[] isAssigned = Arrays.copyOf(memoryPanel1.getAssignedPartitions(), partitions);
 
-    boolean partitionAssigned = false;
-    for (int i = 0; i < partitions; i++) {
-        if (partitionSizes[i] >= newPartitionSize && (!isAssigned[i] || (isAssigned[i] && partitionSizes[i] == newPartitionSize))) {
-            int remainingSpace = partitionSizes[i] - newPartitionSize;
-            partitionSizes[i] = newPartitionSize;
-            isAssigned[i] = true;
+        int firstFitIndex = -1;
 
-            indexOfNewPartition = i;
-
-            if (remainingSpace > 0) {
-                if (i + 1 < partitions) {
-                    for (int j = partitions - 1; j > i; j--) {
-                        partitionSizes[j] = partitionSizes[j - 1];
-                        isAssigned[j] = isAssigned[j - 1];
-                    }
-                    partitionSizes[i + 1] = remainingSpace;
-                    isAssigned[i + 1] = false;
-                } else {
-                    partitionSizes = Arrays.copyOf(partitionSizes, partitions + 1);
-                    isAssigned = Arrays.copyOf(isAssigned, partitions + 1);
-                    partitionSizes[partitions] = remainingSpace;
-                    isAssigned[partitions] = false;
-                    partitions++;
-                }
+        for (int i = 0; i < partitions; i++) {
+            if (!isAssigned[i] && partitionSizes[i] >= newPartitionSize) {
+                firstFitIndex = i;
+                break;
             }
-            partitionAssigned = true;
-            break;
         }
-    }
 
-    if (!partitionAssigned) {
-        JOptionPane.showMessageDialog(this, "No hay suficiente espacio para la nueva partición.");
-        return;
-    }
+        if (firstFitIndex == -1) {
+            JOptionPane.showMessageDialog(this, "No hay suficiente espacio para la nueva partición.");
+            return;
+        }
 
-    MemoryPanel assignedMemoryPanel = new MemoryPanel(memoryPanel1.getMemorySize(), partitions, memoryPanel1.getUnit(), partitionSizes, isAssigned);
-    setMemoryPanelContent(assignedMemoryPanel, JInternalFrame2);
-    assignedMemoryPanel.setIndexOfNewPartition(indexOfNewPartition);
-}
+        int remainingSpace = partitionSizes[firstFitIndex] - newPartitionSize;
+        partitionSizes[firstFitIndex] = newPartitionSize;
+        isAssigned[firstFitIndex] = true;
+
+        indexOfNewPartition = firstFitIndex;
+
+        if (remainingSpace > 0) {
+            partitionSizes = Arrays.copyOf(partitionSizes, partitions + 1);
+            isAssigned = Arrays.copyOf(isAssigned, partitions + 1);
+            for (int j = partitions; j > firstFitIndex + 1; j--) {
+                partitionSizes[j] = partitionSizes[j - 1];
+                isAssigned[j] = isAssigned[j - 1];
+            }
+            partitionSizes[firstFitIndex + 1] = remainingSpace;
+            isAssigned[firstFitIndex + 1] = false;
+        }
+
+        MemoryPanel assignedMemoryPanel = new MemoryPanel(memoryPanel1.getMemorySize(), partitions + 1, memoryPanel1.getUnit(), partitionSizes, isAssigned);
+        setMemoryPanelContent(assignedMemoryPanel, JInternalFrame2);
+        assignedMemoryPanel.setIndexOfNewPartition(indexOfNewPartition);
+    }
 
     private void setMemoryPanelContent(MemoryPanel memoryPanel, javax.swing.JInternalFrame frame) {
         frame.setContentPane(memoryPanel);
@@ -299,9 +295,9 @@ public class AdmMemoria extends javax.swing.JFrame {
     }//GEN-LAST:event_btnMenuActionPerformed
 
     private void btnPrimerajusteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrimerajusteActionPerformed
+        PartitionInputDialog dialog = new PartitionInputDialog(this);
+        dialog.setVisible(true);
 
-    PartitionInputDialog dialog = new PartitionInputDialog(this);
-    dialog.setVisible(true);
     if (dialog.isConfirmed()) {
         int newSize = dialog.getPartitionSize();
         applyFirstFitAlgorithm(newSize);
