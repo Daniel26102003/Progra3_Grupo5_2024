@@ -71,6 +71,49 @@ public class AdmMemoria extends javax.swing.JFrame {
         assignedMemoryPanel.setIndexOfNewPartition(indexOfNewPartition);
     }
         
+   private void applyBestFitAlgorithm(int newPartitionSize) {
+        int partitions = memoryPanel1.getPartitions();
+        int[] partitionSizes = Arrays.copyOf(memoryPanel1.getPartitionSizes(), partitions);
+        boolean[] isAssigned = Arrays.copyOf(memoryPanel1.getAssignedPartitions(), partitions);
+
+        int bestIndex = -1;
+        int smallestFit = Integer.MAX_VALUE;
+
+        for (int i = 0; i < partitions; i++) {
+            int space = partitionSizes[i] - newPartitionSize;
+            if (space >= 0 && space < smallestFit && !isAssigned[i]) {
+                bestIndex = i;
+                smallestFit = space;
+            }
+        }
+
+        if (bestIndex == -1) {
+            JOptionPane.showMessageDialog(this, "No hay suficiente espacio para la nueva partición.");
+            return;
+        }
+
+        int remainingSpace = partitionSizes[bestIndex] - newPartitionSize;
+        partitionSizes[bestIndex] = newPartitionSize;
+        isAssigned[bestIndex] = true;
+
+        indexOfNewPartition = bestIndex;
+
+        if (remainingSpace > 0) {
+            partitionSizes = Arrays.copyOf(partitionSizes, partitions + 1);
+            isAssigned = Arrays.copyOf(isAssigned, partitions + 1);
+            for (int j = partitions; j > bestIndex + 1; j--) {
+                partitionSizes[j] = partitionSizes[j - 1];
+                isAssigned[j] = isAssigned[j - 1];
+            }
+            partitionSizes[bestIndex + 1] = remainingSpace;
+            isAssigned[bestIndex + 1] = false;
+        }
+
+        MemoryPanel assignedMemoryPanel = new MemoryPanel(memoryPanel1.getMemorySize(), partitions + 1, memoryPanel1.getUnit(), partitionSizes, isAssigned);
+        setMemoryPanelContent(assignedMemoryPanel, JInternalFrame2);
+        assignedMemoryPanel.setIndexOfNewPartition(indexOfNewPartition);
+    }
+        
     private void applyWorstFitAlgorithm(int newPartitionSize) {
         int partitions = memoryPanel1.getPartitions();
         int[] partitionSizes = Arrays.copyOf(memoryPanel1.getPartitionSizes(), partitions);
@@ -334,7 +377,13 @@ public class AdmMemoria extends javax.swing.JFrame {
     }//GEN-LAST:event_btnIngresarActionPerformed
 
     private void btnMejorajusteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMejorajusteActionPerformed
-        // TODO add your handling code here:
+         PartitionInputDialog dialog = new PartitionInputDialog(this);
+        dialog.setVisible(true);
+
+    if (dialog.isConfirmed()) {
+        int newSize = dialog.getPartitionSize();
+        applyBestFitAlgorithm(newSize);
+    }
     }//GEN-LAST:event_btnMejorajusteActionPerformed
 
     private void btnMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMenuActionPerformed
